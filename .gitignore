@@ -1,0 +1,27 @@
+# Node.js ve Electron
+node_modules/
+dist/
+out/
+build/
+
+# Paketleme dosyaları
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
+# VSCode ve IDE ayarları
+.vscode/
+.idea/
+
+# Geçici dosyalar
+temp/
+*.tmp
+
+# Electron cache
+.cache/
