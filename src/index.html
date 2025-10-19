@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Generator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h3>Password Generator</h3>
+      <hr />
+      <div class="password-display">
+        <div class="password-text" id="passwordText">p4S$w0rD-g3n</div>
+        <button class="copy-btn" onclick="copyPassword()">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path
+              d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="password-length">
+        <label>Password Length</label>
+        <output id="lengthOutput">10</output>
+        <input
+          type="range"
+          id="length"
+          min="4"
+          max="20"
+          value="10"
+          oninput="updateLength(this)"
+        />
+      </div>
+
+      <div class="password-checkbox">
+        <div class="checkbox">
+          <input type="checkbox" id="upperCase" checked />
+          <label>Uppercase</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="lowerCase" checked />
+          <label>Lowercase</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="numbers" checked />
+          <label>Numbers</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="symbols" />
+          <label>Symbols</label>
+        </div>
+      </div>
+
+      <div class="button-section">
+        <button class="generate-btn" onclick="generatePassword()">
+          Generate Password
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
