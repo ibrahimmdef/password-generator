@@ -1,17 +1,41 @@
 {
   "name": "password-generator",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Password manager built with React. Keeps your logins in an encrypted vault.",
+  "main": "electron/main.cjs",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-packager . PasswordGenerator --platform=win32 --arch=x64 --out=dist --overwrite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "electron": "npm run build && electron .",
+    "package:win": "npm run build && electron-packager . Vault --platform=win32 --arch=x64 --out=release --overwrite --ignore=^/src --ignore=^/public --ignore=^/release --ignore=^/docs --ignore=^/graphify-out",
+    "package:linux": "npm run build && electron-packager . Vault --platform=linux --arch=x64 --out=release --overwrite --ignore=^/src --ignore=^/public --ignore=^/release --ignore=^/docs --ignore=^/graphify-out",
+    "electron:dev": "electron . --dev-url=http://localhost:5173"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "password",
+    "manager",
+    "react",
+    "electron"
+  ],
+  "author": "ibrahimmdef",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^38.3.0",
-    "electron-packager": "^17.1.2"
+    "@electron/packager": "^20.3.0",
+    "@tailwindcss/vite": "^4.3.5",
+    "@vitejs/plugin-react": "^6.3.0",
+    "electron": "^38.8.6",
+    "tailwindcss": "^4.3.5",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "type": "module",
+  "allowScripts": {
+    "electron@38.8.6": true
   }
 }

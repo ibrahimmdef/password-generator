@@ -1,119 +1,86 @@
-# Password Generator 🔐
+# Vault
 
-A sleek and modern desktop application to generate secure passwords with customizable options. Built with Electron for a native desktop experience!
+A desktop password manager built with **React, Tailwind CSS and Electron**. Your logins are kept in one encrypted file on your computer, protected by a master password that is never stored.
 
-## 🚀 Features
+![Vault in light mode](docs/screenshots/vault-light.png)
 
-- ✅ Generate strong, random passwords
-- ✅ Customizable password length (4-32 characters)
-- ✅ Multiple character type options:
-  - Uppercase letters (A-Z)
-  - Lowercase letters (a-z)
-  - Numbers (0-9)
-  - Special symbols (!@#$%^&\*)
-- ✅ One-click copy to clipboard
-- ✅ Modern dark-themed UI
-- ✅ Smooth animations and transitions
-- ✅ Lightweight desktop app
+## Features
 
-## 📸 Screenshot
+- **Encrypted vault.** AES-256-GCM, with a key derived from your master password using PBKDF2-SHA256 at 600,000 iterations. The master password and decrypted data never touch the disk.
+- **Logins with categories and favorites**, plus search across titles, usernames and websites.
+- **2FA codes.** Add a site's setup key (or `otpauth://` link) and the app shows the live 6-digit code with a countdown, like an authenticator app.
+- **Password health.** Finds weak passwords, passwords reused across sites, and passwords not changed for over a year.
+- **Password generator** built into the login form, using `crypto.getRandomValues` with rejection sampling so every character is equally likely.
+- **Safe by default.** Auto-locks after 5 minutes without activity, and clears copied passwords from the clipboard after 30 seconds.
+- **Desktop-first design.** Three-pane layout, keyboard shortcuts, light and dark mode, screen reader labels.
 
-![Password Generator](screenshot.png)
+| Password health | Dark mode |
+| --- | --- |
+| ![Password health](docs/screenshots/health.png) | ![Dark mode](docs/screenshots/vault-dark.png) |
 
-## 🛠️ Technologies Used
+## Keyboard shortcuts
 
-- **Electron** - Desktop application framework
-- **HTML5** - Structure
-- **CSS3** - Modern styling with gradients and animations
-- **Vanilla JavaScript** - Password generation logic
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl/Cmd + F` | Search |
+| `Ctrl/Cmd + N` | New login |
+| `Ctrl/Cmd + L` | Lock the vault |
+| `↑` `↓` | Move through the list |
+| `Esc` | Close the generator or cancel editing |
 
-## 📦 Installation
+## Tech stack
 
-### Prerequisites
+| Area | Tools |
+| --- | --- |
+| UI | React 19, Tailwind CSS 4 |
+| State | `useReducer` + Context |
+| Crypto | Web Crypto API (PBKDF2, AES-GCM, HMAC-SHA1 for TOTP) |
+| Desktop | Electron (sandboxed renderer, `contextBridge` IPC) |
+| Build and tests | Vite, Vitest |
 
-- Node.js (v12 or higher)
-- npm
-
-### Setup
-
-1. Clone the repository:
+## Getting started
 
 ```bash
 git clone https://github.com/ibrahimmdef/password-generator.git
 cd password-generator
-```
-
-2. Install dependencies:
-
-```bash
 npm install
+npm run electron        # build and open the desktop app
 ```
 
-3. Start the application:
+For development in the browser (the vault is kept in `localStorage` there):
 
 ```bash
-npm start
+npm run dev
 ```
 
-## 🏗️ Building for Production
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server in the browser |
+| `npm run electron` | Build and open the desktop app |
+| `npm run electron:dev` | Open Electron against the running dev server |
+| `npm test` | Run the unit tests |
+| `npm run package:linux` | Package a Linux app into `release/` |
+| `npm run package:win` | Package a Windows app into `release/` |
 
-To create a distributable package for Windows:
+## How it's built
 
-```bash
-npm run build
+```
+src/
+├── lib/          Pure logic, no React: crypto, TOTP, password generation,
+│                 health checks, filtering. Each file has its own tests.
+├── state/        vaultReducer (every change to the vault), VaultContext
+│                 (useVault hook), storage (file in Electron, localStorage in the browser)
+├── hooks/        useNow, useIdle, useShortcuts
+├── components/   LockScreen, Vault, Sidebar, LoginList, LoginDetail,
+│                 LoginForm, PasswordGenerator, TotpCode, ui.jsx (shared pieces)
+└── App.jsx       Picks the screen from the vault status
+electron/
+├── main.cjs      Window and the two file operations (load, save)
+└── preload.cjs   Exposes only window.vaultFile to the page
 ```
 
-The packaged application will be created in the `dist/` folder.
+The encryption happens in React. Electron's main process only ever receives the already encrypted file, so it never sees a password. Saves are written to a temporary file and then renamed, so a crash can't leave a half-written vault.
 
-## 📁 Project Structure
+## License
 
-```
-password-generator/
-├── src/
-│   └── index.html       # Main UI and logic
-├── index.js             # Electron main process
-├── package.json         # Project configuration
-├── .gitignore          # Git ignore rules
-└── README.md           # This file
-```
-
-## 🎯 Usage
-
-1. Launch the application
-2. Adjust the password length using the slider
-3. Select which character types you want to include:
-   - Toggle Uppercase letters
-   - Toggle Lowercase letters
-   - Toggle Numbers
-   - Toggle Symbols
-4. Click "Generate Password" button
-5. Click the copy icon next to the password to copy it to clipboard
-
-## 📝 Notes
-
-- At least one character type must be selected
-- Password updates automatically when you change settings
-- Generated passwords are cryptographically random
-- The app window is fixed size (480x591) for optimal user experience
-
-## Contributing 🤝
-
-Feel free to open issues or submit pull requests if you have ideas for improvements!
-
-## 👤 Author
-
-**Ibrahim**
-
-- GitHub: [@ibrahimmdef](https://github.com/ibrahimmdef)
-
-## 📄 License
-
-ISC License - feel free to use this project however you'd like!
-
-## ⭐ Support
-
-If you like this project, don't forget to give it a star!
-
----
-
-**Security Tip**: Always use strong, unique passwords for each of your accounts. This generator helps you create secure passwords, but remember to store them safely using a password manager!
+ISC
