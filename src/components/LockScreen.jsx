@@ -12,7 +12,7 @@ export function LockScreen() {
   const { status } = useVault();
   return (
     <main className="grid h-full place-items-center bg-sidebar p-6">
-      <div className="grid w-full max-w-[360px] gap-4">
+      <div className="grid w-full max-w-[400px] gap-4">
         <span className="grid size-11 place-items-center rounded-xl bg-primary text-on-primary">
           <Icon name="lock" className="size-[22px]" />
         </span>
@@ -60,7 +60,7 @@ function UnlockVault() {
           <span className="sr-only">Master password</span>
           <Input
             ref={input}
-            className="h-[34px] text-md"
+            className="h-10 text-md"
             type="password"
             placeholder="Master password"
             autoFocus
@@ -117,7 +117,7 @@ function CreateVault() {
       <form className="grid gap-3" onSubmit={handleSubmit}>
         <Field label="Master password">
           <Input
-            className="h-[34px] text-md"
+            className="h-10 text-md"
             type="password"
             autoFocus
             autoComplete="new-password"
@@ -129,7 +129,7 @@ function CreateVault() {
         {tooShort ? <Hint error>Use at least {MIN_LENGTH} characters.</Hint> : <StrengthMeter password={password} />}
         <Field label="Confirm master password">
           <Input
-            className="h-[34px] text-md"
+            className="h-10 text-md"
             type="password"
             autoComplete="new-password"
             value={confirm}

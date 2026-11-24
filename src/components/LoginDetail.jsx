@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { hostOf, hrefOf } from "../lib/vault";
-import { timeAgo } from "../lib/format";
+import { ISSUE_LABEL, timeAgo } from "../lib/format";
 import { Avatar } from "./Avatar";
 import { Icon } from "./Icon";
 import { StrengthMeter } from "./StrengthMeter";
@@ -35,15 +35,18 @@ export function LoginDetail({ login, issues = [], sharedWith = [], onEdit, onTog
         <Button onClick={onEdit}>Edit</Button>
       </div>
 
-      <div className={paneScroll}>
-        <article className="grid max-w-[640px] gap-5 px-8 pt-2 pb-10">
-          <header className="flex items-center gap-3.5">
+      {/* @container: the layout below reacts to this pane's width, not the window's */}
+      <div className={`${paneScroll} @container`}>
+        <article className="grid max-w-310 gap-5 px-8 pt-2 pb-10 @4xl:grid-cols-[minmax(0,1fr)_320px] @4xl:items-start @4xl:gap-x-8">
+          <header className="flex items-center gap-4 @4xl:col-span-2">
             <Avatar title={login.title} large />
             <div>
               <h1 className="text-2xl leading-tight font-semibold tracking-tight">{login.title}</h1>
               {login.url && <p className="text-ink-2">{hostOf(login.url)}</p>}
             </div>
           </header>
+
+          <div className="grid gap-5">
 
           {issues.length > 0 && (
             <div className="flex items-start gap-2.5 rounded-lg border border-line px-3 py-2.5" role="note">
@@ -156,11 +159,33 @@ export function LoginDetail({ login, issues = [], sharedWith = [], onEdit, onTog
             </Group>
           )}
 
-          <footer className="grid gap-1 px-1 text-ink-2">
-            <StrengthMeter password={login.password} />
-            <span>Password changed {timeAgo(login.passwordChangedAt)}</span>
-            <span>Created {timeAgo(login.createdAt)}</span>
-          </footer>
+          </div>
+
+          {/* Beside the fields on wide panes, below them on narrow ones */}
+          <aside className="grid gap-3 rounded-lg border border-line p-4" aria-label="Security">
+            <h2 className="font-semibold">Security</h2>
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2.5">
+              <dt className="text-ink-2">Strength</dt>
+              <dd>{login.password ? <StrengthMeter password={login.password} /> : <Muted>No password</Muted>}</dd>
+
+              <dt className="text-ink-2">Status</dt>
+              <dd className={issues.length ? "text-signal" : undefined}>
+                {issues.length ? issues.map((i) => ISSUE_LABEL[i]).join(", ") : "No problems found"}
+              </dd>
+
+              <dt className="text-ink-2">2FA</dt>
+              <dd>{login.totp ? "On" : <Muted>Off</Muted>}</dd>
+
+              <dt className="text-ink-2">Changed</dt>
+              <dd>{timeAgo(login.passwordChangedAt)}</dd>
+
+              <dt className="text-ink-2">Created</dt>
+              <dd>{timeAgo(login.createdAt)}</dd>
+
+              <dt className="text-ink-2">Edited</dt>
+              <dd>{timeAgo(login.updatedAt)}</dd>
+            </dl>
+          </aside>
         </article>
       </div>
     </section>

@@ -41,11 +41,11 @@ export function LoginList({
     <section className={pane} aria-label="Logins">
       <div className={paneBar}>
         <label className="relative flex-1">
-          <Icon name="search" className="pointer-events-none absolute top-[7px] left-2 size-4 text-ink-2" />
+          <Icon name="search" className="pointer-events-none absolute top-2 left-2.5 size-4 text-ink-2" />
           <span className="sr-only">Search logins</span>
           <Input
             ref={searchRef}
-            className="border-transparent bg-surface pl-[30px]"
+            className="border-transparent bg-surface pl-8"
             type="search"
             placeholder="Search"
             value={query}
@@ -76,7 +76,7 @@ export function LoginList({
               key={t}
               aria-pressed={issue === t}
               onClick={() => onIssue(t)}
-              className="h-6 flex-1 rounded-[5px] text-sm whitespace-nowrap aria-pressed:bg-window aria-pressed:font-semibold aria-pressed:shadow-[0_0_0_1px_var(--color-line)]"
+              className="h-7 flex-1 rounded-[5px] text-sm whitespace-nowrap aria-pressed:bg-window aria-pressed:font-semibold aria-pressed:shadow-[0_0_0_1px_var(--color-line)]"
             >
               {t === "all" ? "All" : `${ISSUE_LABEL[t]} ${health.counts[t]}`}
             </button>
@@ -111,7 +111,7 @@ export function LoginList({
                   role="option"
                   aria-selected={selected}
                   onClick={() => onSelect(l.id)}
-                  className={`flex items-center gap-2.5 rounded-md px-2 py-[7px] ${
+                  className={`flex items-center gap-2.5 rounded-md px-2 py-2 ${
                     strong ? "bg-selected-strong text-on-selected-strong" : selected ? "bg-selected" : "hover:bg-hover"
                   }`}
                 >

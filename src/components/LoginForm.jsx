@@ -13,9 +13,16 @@ const NEW_CATEGORY = "__new__";
  * `login` is null for a new login. The form keeps its own copy (`draft`)
  * and only hands it to onSave when the person presses Save.
  */
-export function LoginForm({ login, categories, defaultCategory, onSave, onCancel, onDelete, onAddCategory }) {
+export function LoginForm({ login, template, categories, defaultCategory, onSave, onCancel, onDelete, onAddCategory }) {
   const isNew = !login;
-  const [draft, setDraft] = useState(() => (login ? draftOf(login) : blankDraft(defaultCategory)));
+  const [draft, setDraft] = useState(() => {
+    if (login) return draftOf(login);
+    const draft = blankDraft(template?.category ?? defaultCategory);
+    // A picked service fills in its name and website
+    return template ? { ...draft, title: template.name, url: template.url ?? "" } : draft;
+  });
+  // When a service was picked, the title is done: start at the username
+  const focusUsername = Boolean(template?.url);
   const [showPassword, setShowPassword] = useState(isNew);
   const [generatorOpen, setGeneratorOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -23,6 +30,10 @@ export function LoginForm({ login, categories, defaultCategory, onSave, onCancel
 
   // One change handler for every text field: set("title") returns a function
   const set = (field) => (e) => setDraft((d) => ({ ...d, [field]: e.target.value }));
+
+  // Show the chosen category even if this vault doesn't have it yet (it's added on save)
+  const categoryOptions =
+    draft.category && !categories.includes(draft.category) ? [...categories, draft.category] : categories;
 
   const totpInvalid = draft.totp.trim() !== "" && parseTotp(draft.totp) === null;
   const canSave = draft.title.trim() !== "" && !totpInvalid;
@@ -57,16 +68,16 @@ export function LoginForm({ login, categories, defaultCategory, onSave, onCancel
     <section className={pane} aria-label={isNew ? "New login" : "Edit login"}>
       <div className={paneBar} />
       <div className={paneScroll}>
-        <form className="grid max-w-[640px] gap-4 px-8 pt-2 pb-10" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
+        <form className="grid max-w-[900px] gap-4 px-8 pt-2 pb-10" onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
           <h1 className="text-2xl font-semibold tracking-tight">{isNew ? "New Login" : `Edit ${login.title}`}</h1>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3.5">
             <Field label="Title" className="col-span-2">
-              <Input autoFocus placeholder="GitHub" value={draft.title} onChange={set("title")} required />
+              <Input autoFocus={!focusUsername} placeholder="GitHub" value={draft.title} onChange={set("title")} required />
             </Field>
 
             <Field label="Username or email">
-              <Input autoComplete="off" value={draft.username} onChange={set("username")} />
+              <Input autoFocus={focusUsername} autoComplete="off" value={draft.username} onChange={set("username")} />
             </Field>
 
             <Field label="Website">
@@ -91,11 +102,11 @@ export function LoginForm({ login, categories, defaultCategory, onSave, onCancel
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   title={showPassword ? "Hide" : "Show"}
-                  className="h-[30px] w-[30px]"
+                  className="size-8"
                 >
                   <Icon name={showPassword ? "eyeOff" : "eye"} />
                 </IconButton>
-                <Button type="button" className="h-[30px]" onClick={() => setGeneratorOpen((o) => !o)} aria-expanded={generatorOpen}>
+                <Button type="button" onClick={() => setGeneratorOpen((o) => !o)} aria-expanded={generatorOpen}>
                   <Icon name="wand" />
                   Generate
                 </Button>
@@ -120,7 +131,7 @@ export function LoginForm({ login, categories, defaultCategory, onSave, onCancel
               {newCategory === null ? (
                 <select id="category" className={inputClass} value={draft.category ?? ""} onChange={chooseCategory}>
                   <option value="">None</option>
-                  {categories.map((c) => (
+                  {categoryOptions.map((c) => (
                     <option key={c} value={c}>
                       {c}
                     </option>

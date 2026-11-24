@@ -56,3 +56,16 @@ Detailed explanation: `docs/02-state.md`
 34. `electron/preload.cjs`: the bridge (`window.vaultFile`)
 35. `src/state/storage.js`: uses the file in Electron, localStorage in the browser
 36. `storage/failed` state: a damaged vault shows an error instead of being overwritten
+
+## Step 8: Ready-made services
+37. `src/lib/services.js` + test: the catalog (Social, AI, Learning, Work, Personal) and its search
+38. `src/lib/vault.js`: new vaults start with the AI and Learning categories too
+39. `src/components/ServicePicker.jsx`: the "New Login" picker (search, Enter picks the first match)
+40. `LoginForm.jsx`: takes the picked service as `template` and fills in title, website, category
+41. `Vault.jsx`: a new "pick" mode before "new"; a missing category is added when the login is saved
+
+## Step 9: Filling wide screens
+42. `index.css`: larger type scale (14px base); `ui.jsx`: taller buttons, inputs and rows
+43. `Vault.jsx`: column widths grow with the window (`clamp()`)
+44. `LoginDetail.jsx`: `@container` query: on a wide pane a "Security" card sits beside the fields
+45. `electron/main.cjs`: the window opens at 85% of the screen

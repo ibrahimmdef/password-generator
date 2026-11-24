@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { useVault } from "../state/VaultContext";
 import { analyzeHealth } from "../lib/health";
 import { filterLogins } from "../lib/filter";
+import { hostOf } from "../lib/vault";
 import { sampleLogins } from "../lib/sample";
 import { useIdle } from "../hooks/useIdle";
 import { useShortcuts } from "../hooks/useShortcuts";
@@ -9,6 +10,7 @@ import { Sidebar } from "./Sidebar";
 import { LoginList } from "./LoginList";
 import { LoginDetail } from "./LoginDetail";
 import { LoginForm } from "./LoginForm";
+import { ServicePicker } from "./ServicePicker";
 import { Button, EmptyState, pane } from "./ui";
 
 const AUTO_LOCK_AFTER = 5 * 60_000; // 5 minutes without activity
@@ -24,7 +26,8 @@ export function Vault() {
   const [issue, setIssue] = useState("all");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const [mode, setMode] = useState("view"); // "view" | "edit" | "new"
+  const [mode, setMode] = useState("view"); // "view" | "pick" | "new" | "edit"
+  const [template, setTemplate] = useState(null); // the service picked for a new login
   const searchRef = useRef(null);
 
   // Derived data: recalculated only when what it depends on changes
@@ -34,11 +37,12 @@ export function Vault() {
     [vault.logins, filter, query, health, issue],
   );
   const selected = vault.logins.find((l) => l.id === selectedId) ?? null;
+  const addedHosts = useMemo(() => new Set(vault.logins.map((l) => hostOf(l.url))), [vault.logins]);
 
   useIdle(actions.lock, AUTO_LOCK_AFTER);
   useShortcuts({
     f: () => searchRef.current?.focus(),
-    n: () => setMode("new"),
+    n: () => setMode("pick"),
     l: actions.lock,
   });
 
@@ -53,7 +57,14 @@ export function Vault() {
     setMode("view");
   }
 
+  function pickService(service) {
+    setTemplate(service);
+    setMode("new");
+  }
+
   function save(draft) {
+    // A picked service may use a category this vault doesn't have yet
+    if (draft.category && !vault.categories.includes(draft.category)) actions.addCategory(draft.category);
     if (mode === "new") {
       const login = actions.addLogin(draft);
       setSelectedId(login.id);
@@ -78,9 +89,18 @@ export function Vault() {
   };
 
   let detail;
-  if (mode === "new") {
+  if (mode === "pick") {
+    detail = <ServicePicker addedHosts={addedHosts} onPick={pickService} onCancel={() => setMode("view")} />;
+  } else if (mode === "new") {
     detail = (
-      <LoginForm key="new" login={null} defaultCategory={filter.kind === "category" ? filter.name : null} {...formProps} />
+      <LoginForm
+        key={`new-${template?.name ?? ""}`}
+        login={null}
+        template={template}
+        defaultCategory={filter.kind === "category" ? filter.name : null}
+        {...formProps}
+        onCancel={() => setMode("pick")}
+      />
     );
   } else if (mode === "edit" && selected) {
     detail = <LoginForm key={selected.id} login={selected} onDelete={remove} {...formProps} />;
@@ -103,7 +123,7 @@ export function Vault() {
         title="No logins yet"
         actions={
           <>
-            <Button variant="primary" onClick={() => setMode("new")}>
+            <Button variant="primary" onClick={() => setMode("pick")}>
               New Login
             </Button>
             {import.meta.env.DEV && (
@@ -120,7 +140,8 @@ export function Vault() {
   }
 
   return (
-    <div className="grid h-full grid-cols-[220px_300px_minmax(0,1fr)] divide-x divide-line max-[900px]:grid-cols-[180px_260px_minmax(0,1fr)]">
+    // Sidebar and list grow with the window (clamp: min, preferred, max)
+    <div className="grid h-full grid-cols-[clamp(190px,15vw,270px)_clamp(270px,23vw,400px)_minmax(0,1fr)] divide-x divide-line">
       <Sidebar
         logins={vault.logins}
         categories={vault.categories}
@@ -138,7 +159,7 @@ export function Vault() {
         query={query}
         onQuery={setQuery}
         searchRef={searchRef}
-        onNew={() => setMode("new")}
+        onNew={() => setMode("pick")}
         health={health}
         issue={issue}
         onIssue={setIssue}

@@ -2,7 +2,7 @@
 // It never sees the master password or the decrypted data: React encrypts
 // everything before handing it over, so this side only moves encrypted JSON.
 
-const { app, BrowserWindow, ipcMain, nativeTheme, shell } = require("electron");
+const { app, BrowserWindow, ipcMain, nativeTheme, screen, shell } = require("electron");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 
@@ -12,9 +12,11 @@ const VAULT_FILE = () => path.join(app.getPath("userData"), "vault.pwvault");
 const devUrl = process.argv.find((a) => a.startsWith("--dev-url="))?.slice("--dev-url=".length);
 
 function createWindow() {
+  // Open at about 85% of the screen, so large monitors get a large window
+  const { width: sw, height: sh } = screen.getPrimaryDisplay().workAreaSize;
   const win = new BrowserWindow({
-    width: 1200,
-    height: 780,
+    width: Math.max(1000, Math.round(sw * 0.85)),
+    height: Math.max(640, Math.round(sh * 0.85)),
     minWidth: 900,
     minHeight: 560,
     show: false,

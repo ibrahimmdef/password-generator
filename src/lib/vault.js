@@ -12,7 +12,7 @@
  * }
  */
 
-export const DEFAULT_CATEGORIES = ["Personal", "Work", "Finance", "Social"];
+export const DEFAULT_CATEGORIES = ["Social", "AI", "Learning", "Work", "Finance", "Personal"];
 
 export function emptyVault() {
   return { version: 1, categories: [...DEFAULT_CATEGORIES], logins: [] };

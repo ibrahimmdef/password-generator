@@ -28,16 +28,17 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, monospace;
 
-  /* Desktop type scale: 13px body, per Apple's macOS guidance */
-  --text-xs: 11px;
-  --text-sm: 12px;
-  --text-base: 13px;
+  /* Desktop type scale: 14px body (one step above macOS's 13px, which
+     reads small on Windows and Linux screens) */
+  --text-xs: 11.5px;
+  --text-sm: 12.5px;
+  --text-base: 14px;
   --text-base--line-height: 1.45;
-  --text-md: 14px;
-  --text-lg: 15px;
-  --text-xl: 18px;
-  --text-2xl: 20px;
-  --text-3xl: 22px;
+  --text-md: 15px;
+  --text-lg: 16px;
+  --text-xl: 19px;
+  --text-2xl: 22px;
+  --text-3xl: 24px;
 
   --animate-toast-in: toast-in 160ms ease-out;
   @keyframes toast-in {

@@ -4,7 +4,7 @@ import { Icon } from "./Icon";
 import { IconButton, Input, pane, paneBar, paneScroll } from "./ui";
 
 const itemClass =
-  "flex h-7 w-full items-center gap-2 rounded-md px-2 text-left hover:bg-hover aria-[current=true]:bg-selected aria-[current=true]:font-semibold";
+  "flex h-8 w-full items-center gap-2 rounded-md px-2 text-left hover:bg-hover aria-[current=true]:bg-selected aria-[current=true]:font-semibold";
 
 /** Left column: what to show in the list. */
 export function Sidebar({ logins, categories, health, filter, onFilter, onAddCategory, onLock }) {
