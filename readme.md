@@ -4,19 +4,35 @@ A desktop password manager built with **React, Tailwind CSS and Electron**. Your
 
 ![Vault in light mode](docs/screenshots/vault-light.png)
 
+## Download
+
+Get the latest version from the [Releases page](https://github.com/ibrahimmdef/password-generator/releases/latest):
+
+| System | File | How to run |
+| --- | --- | --- |
+| Windows | `Vault-1.0.0-windows-x64.zip` | Unzip and open `Vault.exe` |
+| Linux | `Vault-1.0.0-linux-x64.zip` | Unzip and run `Vault` |
+
+The app isn't code-signed yet, so Windows may show a SmartScreen warning. Choose **More info → Run anyway**.
+
+Your vault is saved in `%APPDATA%\Vault` on Windows and `~/.config/Vault` on Linux.
+
 ## Features
 
 - **Encrypted vault.** AES-256-GCM, with a key derived from your master password using PBKDF2-SHA256 at 600,000 iterations. The master password and decrypted data never touch the disk.
 - **Logins with categories and favorites**, plus search across titles, usernames and websites.
+- **Ready-made services.** Pick Instagram, ChatGPT, GitHub and 29 more from a searchable catalog, and the title, website and category are filled in for you.
 - **2FA codes.** Add a site's setup key (or `otpauth://` link) and the app shows the live 6-digit code with a countdown, like an authenticator app.
 - **Password health.** Finds weak passwords, passwords reused across sites, and passwords not changed for over a year.
 - **Password generator** built into the login form, using `crypto.getRandomValues` with rejection sampling so every character is equally likely.
 - **Safe by default.** Auto-locks after 5 minutes without activity, and clears copied passwords from the clipboard after 30 seconds.
 - **Desktop-first design.** Three-pane layout, keyboard shortcuts, light and dark mode, screen reader labels.
 
-| Password health | Dark mode |
+| Password health | Ready-made services |
 | --- | --- |
-| ![Password health](docs/screenshots/health.png) | ![Dark mode](docs/screenshots/vault-dark.png) |
+| ![Password health](docs/screenshots/health.png) | ![Ready-made services](docs/screenshots/services.png) |
+| **Dark mode** | **Lock screen** |
+| ![Dark mode](docs/screenshots/vault-dark.png) | ![Lock screen](docs/screenshots/lock.png) |
 
 ## Keyboard shortcuts
 
@@ -67,12 +83,13 @@ npm run dev
 ```
 src/
 ├── lib/          Pure logic, no React: crypto, TOTP, password generation,
-│                 health checks, filtering. Each file has its own tests.
+│                 health checks, filtering, services catalog. Each file has its own tests.
 ├── state/        vaultReducer (every change to the vault), VaultContext
 │                 (useVault hook), storage (file in Electron, localStorage in the browser)
 ├── hooks/        useNow, useIdle, useShortcuts
 ├── components/   LockScreen, Vault, Sidebar, LoginList, LoginDetail,
-│                 LoginForm, PasswordGenerator, TotpCode, ui.jsx (shared pieces)
+│                 LoginForm, ServicePicker, PasswordGenerator, TotpCode,
+│                 ui.jsx (shared pieces)
 └── App.jsx       Picks the screen from the vault status
 electron/
 ├── main.cjs      Window and the two file operations (load, save)
